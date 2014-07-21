@@ -1,5 +1,5 @@
 package main
-	
+
 import(
 	"github.com/zudijyr/tiletrade/building"
 	"github.com/zudijyr/tiletrade/tile"
@@ -9,19 +9,17 @@ import(
 
 const WORLD_SIZE = 10
 
-//resource initializations
-var resource_null   = resource.Resource{"null"}
-var resource_gold   = resource.Resource{"gold"}
-var resource_lead   = resource.Resource{"lead"}
-var resource_people = resource.Resource{"people"}
-var resource_food   = resource.Resource{"food"}
-var resource_grain  = resource.Resource{"grain"}
-var resource_fish   = resource.Resource{"fish"}
-var resource_trees  = resource.Resource{"trees"}
-var resource_lumber = resource.Resource{"lumber"}
-//end resource initializations
+
+
+//unit initializations
+var unit1 = unit.Unit{"unit", 5,2,3, 5, 3, 0, resource.Fish, false}
+var peasant = unit.Unit{Name: "peasant", Move: 5, Xposition: 4, Yposition: 4, Current_move: 5, 
+	Cargo_space: 1, Cargo_amount: 0, Cargo_type: resource.Null, Can_move_water: false}
+var wagon = unit.Unit{}
 
 func main() {
+	fishing_boat := unit1
+	fishing_boat.Can_move_water = true
 	//initialize tile_array
 	var tile_array = [WORLD_SIZE][WORLD_SIZE]tile.Tile{}
 	for i:=0; i < 10; i++ {
@@ -42,32 +40,17 @@ func main() {
 	//route[1] = tile_array[6][5]
 	//route[2] = tile_array[7][5]
 
-	route2 := Make_route( tile_array[5][5], tile_array[7][5], tile_array)
+	//route2 := Make_route( tile_array[5][5], tile_array[7][5], tile_array)
 
-	unit1 := unit.Unit{"unit", 5,2,3, 5, 3, 0, resource_fish, false}
-	fishing_boat := Boat{unit1, route2}
-	wagon := unit.Unit{}
 	
-	//peasant
-	peasant := unit.Unit{}
-	peasant.Name = "peasant"
-	peasant.Move = 5
-	peasant.Xposition = 4
-	peasant.Yposition = 4
-	peasant.Current_move = 5
-	peasant.Cargo_space = 1
-	peasant.Cargo_amount = 0
-	peasant.Cargo_type = resource_null
-	peasant.Can_move_water = false
-	//end peasant declarations
 
 	print(peasant.Cargo_amount)
 	println(peasant.Cargo_type.Name)
-	peasant.Collect_resource(tile_array[2][4], resource_trees)
+	peasant.Collect_resource(tile_array[2][4], resource.Trees)
 	print(peasant.Cargo_amount)
 	println(peasant.Cargo_type.Name)
 
-	fishing_boat.Collect_fish(fishing_boat.route)
+	//fishing_boat.Collect_fish(fishing_boat.route)
 
 	unit1.Move_unit(0,1, tile_array)
 	land_tile := tile.Tile{}
@@ -75,13 +58,6 @@ func main() {
 	plains_tile := land_tile
 	plains_tile.Is_plains = true
 
-	//building initializations
-	gold_mine := building.Building{Name: "gold mine", Input_type: resource_people, Output_type: resource_gold}
-	lead_mine := building.Building{"lead mine", 2, 2, resource_people, 1, resource_lead, 2,0,0}
-	grain_mill := building.Building{"grain mill", 1, 1, resource_grain, 1, resource_food, 2,0,0}
-	lumber_mill := building.Building{"lumber mill", 1, 1, resource_trees, 1, resource_lumber, 2,0,0}
-	grain_farm := building.Building{"grain farm", 1, 1, resource_null, 1, resource_grain, 2,0,0}
-	fishing_dock := building.Building{"fishing dock", 1, 1, resource_fish, 1, resource_food, 2,0,0}
 
 	//small_boatyard := unit.Unit_building.Building{fishing_dock, fishing_boat.unit.Unit, 1}
 	//small_boatyard.input_type = resource_lumber
@@ -89,12 +65,12 @@ func main() {
 	//small_boatyard.name = "small boatyard"
 	//end building initializations
 
-	tile_array[3][4].Building = gold_mine
-	tile_array[4][4].Building = lead_mine
-	tile_array[5][4].Building = grain_farm
-	tile_array[6][4].Building = grain_mill
-	tile_array[7][4].Building = fishing_dock
-	tile_array[8][4].Building = lumber_mill
+	tile_array[3][4].Building = building.Gold_mine
+	tile_array[4][4].Building = building.Lead_mine
+	tile_array[5][4].Building = building.Grain_farm
+	tile_array[6][4].Building = building.Grain_mill
+	tile_array[7][4].Building = building.Fishing_dock
+	tile_array[8][4].Building = building.Lumber_mill
 
 	//tile_array[9][4].Building = small_boatyard.building.Building
 
@@ -121,7 +97,7 @@ func main() {
 	println(tile_array[7][4].Building.Output_type.Name)
 
 	//wagon
-	wagon.Cargo_type = resource_trees
+	wagon.Cargo_type = resource.Trees
 	wagon.Cargo_space = 3
 	wagon.Cargo_amount = 3
 	wagon.Unload(&tile_array[8][4].Building)	
