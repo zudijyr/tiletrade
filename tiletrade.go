@@ -9,17 +9,14 @@ import(
 
 const WORLD_SIZE = 10
 
-
-
-//unit initializations
-var unit1 = unit.Unit{"unit", 5,2,3, 5, 3, 0, resource.Fish, false}
-var peasant = unit.Unit{Name: "peasant", Move: 5, Xposition: 4, Yposition: 4, Current_move: 5, 
-	Cargo_space: 1, Cargo_amount: 0, Cargo_type: resource.Null, Can_move_water: false}
-var wagon = unit.Unit{}
-
 func main() {
-	fishing_boat := unit1
-	fishing_boat.Can_move_water = true
+	
+	//instantiate some units
+	Fishing_boat1 := unit.Fishing_boat
+	Peasant1 := unit.Peasant
+	Wagon1 := unit.Wagon
+	Basic_unit1 := unit.Basic_unit
+
 	//initialize tile_array
 	var tile_array = [WORLD_SIZE][WORLD_SIZE]tile.Tile{}
 	for i:=0; i < 10; i++ {
@@ -40,26 +37,23 @@ func main() {
 	//route[1] = tile_array[6][5]
 	//route[2] = tile_array[7][5]
 
-	//route2 := Make_route( tile_array[5][5], tile_array[7][5], tile_array)
+	route2 := Make_route( tile_array[5][5], tile_array[7][5], tile_array)
+	Fishing_boat1.Collect_fish(route2)
 
-	
+	print(Peasant1.Cargo_amount)
+	println(Peasant1.Cargo_type.Name)
+	Peasant1.Collect_resource(tile_array[2][4], resource.Trees)
+	print(Peasant1.Cargo_amount)
+	println(Peasant1.Cargo_type.Name)
 
-	print(peasant.Cargo_amount)
-	println(peasant.Cargo_type.Name)
-	peasant.Collect_resource(tile_array[2][4], resource.Trees)
-	print(peasant.Cargo_amount)
-	println(peasant.Cargo_type.Name)
-
-	//fishing_boat.Collect_fish(fishing_boat.route)
-
-	unit1.Move_unit(0,1, tile_array)
+	Basic_unit1.Move_unit(0,1, tile_array)
 	land_tile := tile.Tile{}
 	land_tile.Is_land = true
 	plains_tile := land_tile
 	plains_tile.Is_plains = true
 
 
-	//small_boatyard := unit.Unit_building.Building{fishing_dock, fishing_boat.unit.Unit, 1}
+	//small_boatyard := unit.Unit_building.Building{fishing_dock, Fishing_boat.unit.Unit, 1}
 	//small_boatyard.input_type = resource_lumber
 	//small_boatyard.input_amount = 2
 	//small_boatyard.name = "small boatyard"
@@ -74,10 +68,10 @@ func main() {
 
 	//tile_array[9][4].Building = small_boatyard.building.Building
 
-	fishing_boat.Unload(&tile_array[7][4].Building)	
+	Fishing_boat1.Unload(&tile_array[7][4].Building)	
 	print("unloading fish from fishing boat onto fishing dock.  New Cargo load is ")
-	print(fishing_boat.Cargo_amount)
-	println(fishing_boat.Cargo_type.Name)
+	print(Fishing_boat1.Cargo_amount)
+	println(Fishing_boat1.Cargo_type.Name)
 	print("fishing dock now stores ")
 	print(tile_array[7][4].Building.Input_storage_amount)
 	println(tile_array[7][4].Building.Input_type.Name)
@@ -88,31 +82,31 @@ func main() {
 	print("and ")
 	print(tile_array[7][4].Building.Input_storage_amount)
 	println(tile_array[7][4].Building.Input_type.Name)
-	fishing_boat.Load(&tile_array[7][4].Building)	
+	Fishing_boat1.Load(&tile_array[7][4].Building)	
 	print("loading food onto fishing boat from fishing dock.  New Cargo load is ")
-	print(fishing_boat.Cargo_amount)
-	println(fishing_boat.Cargo_type.Name)
+	print(Fishing_boat1.Cargo_amount)
+	println(Fishing_boat1.Cargo_type.Name)
 	print("fishing dock now stores ")
 	print(tile_array[7][4].Building.Output_storage_amount)
 	println(tile_array[7][4].Building.Output_type.Name)
 
-	//wagon
-	wagon.Cargo_type = resource.Trees
-	wagon.Cargo_space = 3
-	wagon.Cargo_amount = 3
-	wagon.Unload(&tile_array[8][4].Building)	
+	//Wagon
+	Wagon1.Cargo_type = resource.Trees
+	Wagon1.Cargo_space = 3
+	Wagon1.Cargo_amount = 3
+	Wagon1.Unload(&tile_array[8][4].Building)	
 	tile_array[8][4].Building.Production()
-	wagon.Load(&tile_array[8][4].Building)	
-	print("loading lumber onto wagon from lumber mill.  New Cargo load is ")
-	print(wagon.Cargo_amount)
-	println(wagon.Cargo_type.Name)
+	Wagon1.Load(&tile_array[8][4].Building)	
+	print("loading lumber onto Wagon from lumber mill.  New Cargo load is ")
+	print(Wagon1.Cargo_amount)
+	println(Wagon1.Cargo_type.Name)
 	//end unload, production, and load
 
 	//small_boatyard
-	//new_fishing_boat := small_boatyard.unit.Unit_Production(tile_array[9][4])
-	//println(new_fishing_boat.Xposition)
-	//println(new_fishing_boat.Cargo_type.Name)
-	//	new_fishing_boat.route == Make_route( tile_array[5][5], tile_array[7][5], tile_array)
+	//new_Fishing_boat := small_boatyard.unit.Unit_Production(tile_array[9][4])
+	//println(new_Fishing_boat.Xposition)
+	//println(new_Fishing_boat.Cargo_type.Name)
+	//	new_Fishing_boat.route == Make_route( tile_array[5][5], tile_array[7][5], tile_array)
 
 }
 
@@ -138,13 +132,6 @@ type Boat struct{
 	route []tile.Tile
 }
 
-
-
-
-func (b *Boat) Collect_fish(route []tile.Tile) {
-	b.Cargo_amount += len(route)
-	if (b.Cargo_amount > b.Cargo_space) {b.Cargo_amount = b.Cargo_space}
-}
 
 func (u *Boat) Move(x int, y int, tile_array [WORLD_SIZE][WORLD_SIZE]tile.Tile) {
 	newXposition := u.Xposition + x

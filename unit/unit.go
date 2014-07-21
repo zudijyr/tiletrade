@@ -6,6 +6,13 @@ import ( "github.com/zudijyr/tiletrade/tile"     )
 
 const WORLD_SIZE = 10
 
+var Basic_unit = Unit{"unit", 5,2,3, 5, 3, 0, resource.Fish, false}
+var Peasant = Unit{Name: "peasant", Move: 5, Xposition: 4, Yposition: 4, Current_move: 5, 
+	Cargo_space: 1, Cargo_amount: 0, Cargo_type: resource.Null, Can_move_water: false}
+var Wagon = Unit{}
+var Fishing_boat = Unit{Name: "fishing boat", Move: 5, Xposition: 4, Yposition: 4, Current_move: 5, 
+	Cargo_space: 3, Cargo_amount: 0, Cargo_type: resource.Fish, Can_move_water: true}
+
 type Unit struct {
 	Name string
 	Move, Xposition, Yposition int
@@ -41,6 +48,12 @@ func (unit *Unit) Collect_resource(tile tile.Tile, resource resource.Resource) {
 		unit.Cargo_type = resource
 		unit.Cargo_amount = 1
 	}
+}
+
+func (b *Unit) Collect_fish(route []tile.Tile) {
+	if (b.Can_move_water == false) {return}
+	b.Cargo_amount += len(route)
+	if (b.Cargo_amount > b.Cargo_space) {b.Cargo_amount = b.Cargo_space}
 }
 
 func (u *Unit) Move_unit(x int, y int, tile_array [10][10]tile.Tile) {
